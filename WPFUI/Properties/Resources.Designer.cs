@@ -42,7 +42,7 @@ namespace WPFUI.Properties
         {
             get
             {
-                if((resourceMan == null))
+                if ((resourceMan == null))
                 {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WPFUI.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;

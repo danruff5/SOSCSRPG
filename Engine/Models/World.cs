@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Engine.Models
 {
@@ -13,15 +17,10 @@ namespace Engine.Models
 
         public Location LocationAt(int xCoordinate, int yCoordinate)
         {
-            foreach(Location loc in _locations)
-            {
-                if(loc.XCoordinate == xCoordinate && loc.YCoordinate == yCoordinate)
-                {
-                    return loc;
-                }
-            }
-
-            return null;
+            return _locations.SingleOrDefault(loc => 
+                loc.XCoordinate == xCoordinate 
+                && loc.YCoordinate == yCoordinate
+            );
         }
     }
 }

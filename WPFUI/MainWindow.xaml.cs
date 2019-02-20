@@ -1,12 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 using Engine.EventArgs;
 using Engine.Models;
 using Engine.ViewModels;
+using Engine;
 
 namespace WPFUI
 {
@@ -15,36 +24,40 @@ namespace WPFUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly GameSession _gameSession = new GameSession();
-        private readonly Dictionary<Key, Action> _userInputActions = 
-            new Dictionary<Key, Action>();
+        private readonly GameSession _gameSession; // TODO: Link to the Proxies
+        private readonly Dictionary<Key, Action> _userInputActions = new Dictionary<Key, Action>();
 
         public MainWindow()
         {
             InitializeComponent();
-
             InitializeUserInputActions();
 
-            _gameSession.OnMessageRaised += OnGameMessageRaised;
+            GameSession gs = new GameSession();
+            NotifyPropertyChangedProxy<GameSession> p = new NotifyPropertyChangedProxy<GameSession>(gs);
+            _gameSession = p.GetTransparentProxy() as GameSession;
 
+            _gameSession.OnMessageRaised += OnGameMessageRaised;
             DataContext = _gameSession;
+        }
+
+        private void OnGameMessageRaised(object sender, GameMessagesEventArgs e)
+        {
+            GameMessages.Document.Blocks.Add(new Paragraph(new Run(e.Message)));
+            GameMessages.ScrollToEnd();
         }
 
         private void OnClick_MoveNorth(object sender, RoutedEventArgs e)
         {
             _gameSession.MoveNorth();
         }
-
         private void OnClick_MoveWest(object sender, RoutedEventArgs e)
         {
             _gameSession.MoveWest();
         }
-
         private void OnClick_MoveEast(object sender, RoutedEventArgs e)
         {
             _gameSession.MoveEast();
         }
-
         private void OnClick_MoveSouth(object sender, RoutedEventArgs e)
         {
             _gameSession.MoveSouth();
@@ -54,27 +67,18 @@ namespace WPFUI
         {
             _gameSession.AttackCurrentMonster();
         }
-
         private void OnClick_UseCurrentConsumable(object sender, RoutedEventArgs e)
         {
             _gameSession.UseCurrentConsumable();
         }
-
-        private void OnGameMessageRaised(object sender, GameMessageEventArgs e)
-        {
-            GameMessages.Document.Blocks.Add(new Paragraph(new Run(e.Message)));
-            GameMessages.ScrollToEnd();
-        }
-
         private void OnClick_DisplayTradeScreen(object sender, RoutedEventArgs e)
         {
-            if(_gameSession.CurrentTrader != null)
+            TradeScreen trade = new TradeScreen
             {
-                TradeScreen tradeScreen = new TradeScreen();
-                tradeScreen.Owner = this;
-                tradeScreen.DataContext = _gameSession;
-                tradeScreen.ShowDialog();
-            }
+                Owner = this,
+                DataContext = _gameSession
+            };
+            trade.ShowDialog();
         }
 
         private void OnClick_Craft(object sender, RoutedEventArgs e)
@@ -96,7 +100,7 @@ namespace WPFUI
             _userInputActions.Add(Key.R, () => SetTabFocusTo("RecipesTabItem"));
             _userInputActions.Add(Key.T, () => OnClick_DisplayTradeScreen(this, new RoutedEventArgs()));
         }
-
+ 
         private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
         {
             if(_userInputActions.ContainsKey(e.Key))

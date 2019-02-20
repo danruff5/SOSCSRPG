@@ -7,13 +7,12 @@ namespace Engine.Actions
     {
         protected readonly GameItem _itemInUse;
 
-        public event EventHandler<string> OnActionPerformed;
-
         protected BaseAction(GameItem itemInUse)
         {
             _itemInUse = itemInUse;
         }
 
+        public event EventHandler<string> OnActionPerformed;
         protected void ReportResult(string result)
         {
             OnActionPerformed?.Invoke(this, result);

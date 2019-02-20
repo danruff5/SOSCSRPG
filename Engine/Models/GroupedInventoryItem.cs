@@ -1,34 +1,39 @@
-﻿namespace Engine.Models
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Engine.Models
 {
-    public class GroupedInventoryItem : BaseNotificationClass
+    public class GroupedInventoryItem : BaseNotifyPropertyChanged
     {
         private GameItem _item;
         private int _quantity;
+
+        public GroupedInventoryItem(GameItem item, int quantity)
+        {
+            Item = item;
+            Quantity = quantity;
+        }
 
         public GameItem Item
         {
             get { return _item; }
             set
             {
-                _item = value; 
-                OnPropertyChanged(nameof(Item));
+                _item = value;
+                OnPropertyChanged();
             }
         }
-
         public int Quantity
         {
             get { return _quantity; }
             set
             {
-                _quantity = value; 
-                OnPropertyChanged(nameof(Quantity));
+                _quantity = value;
+                OnPropertyChanged();
             }
-        }
-
-        public GroupedInventoryItem(GameItem item, int quantity)
-        {
-            Item = item;
-            Quantity = quantity;
         }
     }
 }

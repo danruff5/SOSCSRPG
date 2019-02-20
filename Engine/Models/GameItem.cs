@@ -1,4 +1,9 @@
 ﻿using Engine.Actions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Engine.Models
 {
@@ -14,19 +19,26 @@ namespace Engine.Models
         public ItemCategory Category { get; }
         public int ItemTypeID { get; }
         public string Name { get; }
-        public int Price { get; }
+        public int Price { get; set; }
         public bool IsUnique { get; }
         public IAction Action { get; set; }
 
-        public GameItem(ItemCategory category, int itemTypeID, string name, int price,
-                        bool isUnique = false, IAction action = null)
+        public GameItem
+        (
+            ItemCategory category,
+            int itemTypeID,
+            string name,
+            int price,
+            bool isUnique = false,
+            int minimumDamage = 0,
+            int maximumDamage = 0
+        )
         {
             Category = category;
             ItemTypeID = itemTypeID;
             Name = name;
             Price = price;
             IsUnique = isUnique;
-            Action = action;
         }
 
         public void PerformAction(LivingEntity actor, LivingEntity target)
@@ -36,7 +48,7 @@ namespace Engine.Models
 
         public GameItem Clone()
         {
-            return new GameItem(Category, ItemTypeID, Name, Price, IsUnique, Action);
+            return new GameItem(Category, ItemTypeID, Name, Price, IsUnique);
         }
     }
 }

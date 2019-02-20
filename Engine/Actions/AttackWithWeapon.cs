@@ -1,27 +1,30 @@
-﻿using System;
-using Engine.Models;
+﻿using Engine.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Engine.Actions
 {
     public class AttackWithWeapon : BaseAction, IAction
     {
-        private readonly int _maximumDamage;
         private readonly int _minimumDamage;
+        private readonly int _maximumDamage;
 
-        public AttackWithWeapon(GameItem itemInUse, int minimumDamage, int maximumDamage) 
-            : base(itemInUse)
+        public AttackWithWeapon(GameItem weapon, int minimumDamage, int maximumDamage) : base(weapon)
         {
-            if(itemInUse.Category != GameItem.ItemCategory.Weapon)
+            if (weapon.Category != GameItem.ItemCategory.Weapon)
             {
-                throw new ArgumentException($"{itemInUse.Name} is not a weapon");
+                throw new ArgumentException($"{weapon.Name} is not a weapon");
             }
 
-            if(_minimumDamage < 0)
+            if (_minimumDamage < 0)
             {
-                throw new ArgumentException("minimumDamage must be 0 or larger");
+                throw new ArgumentException("minimumDamge must be 0 or larger");
             }
 
-            if(_maximumDamage < _minimumDamage)
+            if (_maximumDamage < _minimumDamage)
             {
                 throw new ArgumentException("maximumDamage must be >= minimumDamage");
             }
@@ -44,7 +47,7 @@ namespace Engine.Actions
             else
             {
                 ReportResult($"{actorName} hit {targetName} for {damage} point{(damage > 1 ? "s" : "")}.");
-
+ 
                 target.TakeDamage(damage);
             }
         }

@@ -1,24 +1,32 @@
-﻿namespace Engine.Models
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Engine.Models
 {
-    public class QuestStatus : BaseNotificationClass
+    public class QuestStatus :BaseNotifyPropertyChanged
     {
-        private bool _isCompleted;
+        private bool _isCompleated;
 
         public Quest PlayerQuest { get; }
-        public bool IsCompleted
-        {
-            get { return _isCompleted;}
-            set
-            {
-                _isCompleted = value;
-                OnPropertyChanged();
-            }
-        }
 
         public QuestStatus(Quest quest)
         {
             PlayerQuest = quest;
             IsCompleted = false;
+        }
+
+        public bool IsCompleted
+        {
+            get { return _isCompleated; }
+            set
+            {
+                _isCompleated = value;
+
+                OnPropertyChanged();
+            }
         }
     }
 }
