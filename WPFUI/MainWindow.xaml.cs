@@ -1,21 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Engine.EventArgs;
+﻿using Engine.EventArgs;
+using Engine.Factories;
 using Engine.Models;
 using Engine.ViewModels;
-using Engine;
+using System;
+using System.Collections.Generic;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Input;
 
 namespace WPFUI
 {
@@ -32,9 +24,7 @@ namespace WPFUI
             InitializeComponent();
             InitializeUserInputActions();
 
-            GameSession gs = new GameSession();
-            NotifyPropertyChangedProxy<GameSession> p = new NotifyPropertyChangedProxy<GameSession>(gs);
-            _gameSession = p.GetTransparentProxy() as GameSession;
+            _gameSession = BaseFactory.Create<GameSessionFactory, GameSession>();
 
             _gameSession.OnMessageRaised += OnGameMessageRaised;
             DataContext = _gameSession;
@@ -100,10 +90,10 @@ namespace WPFUI
             _userInputActions.Add(Key.R, () => SetTabFocusTo("RecipesTabItem"));
             _userInputActions.Add(Key.T, () => OnClick_DisplayTradeScreen(this, new RoutedEventArgs()));
         }
- 
+
         private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
         {
-            if(_userInputActions.ContainsKey(e.Key))
+            if (_userInputActions.ContainsKey(e.Key))
             {
                 _userInputActions[e.Key].Invoke();
             }
@@ -111,7 +101,7 @@ namespace WPFUI
 
         private void SetTabFocusTo(string tabName)
         {
-            foreach(object item in PlayerDataTabControl.Items)
+            foreach (object item in PlayerDataTabControl.Items)
             {
                 if (item is TabItem tabItem)
                 {

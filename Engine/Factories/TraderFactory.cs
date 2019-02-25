@@ -1,33 +1,26 @@
-﻿using Engine.Models;
+﻿using Castle.DynamicProxy;
+using Engine.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Factories
 {
-    public static class TraderFactory
+    public class TraderFactory : BaseFactory, IFactory
     {
         private static readonly List<Trader> _traders = new List<Trader>();
 
         static TraderFactory()
         {
-            Trader susan = new Trader("Susan");
+            Trader susan = Create<TraderFactory, Trader>("Susan");
             susan.AddItemToInventory(ItemFactory.CreateGameItem(1001));
-            NotifyPropertyChangedProxy<Trader> pSusan = new NotifyPropertyChangedProxy<Trader>(susan);
 
-            Trader farmerTed = new Trader("Farmer Ted");
+            Trader farmerTed = Create<TraderFactory, Trader>("Farmer Ted");
             farmerTed.AddItemToInventory(ItemFactory.CreateGameItem(1001));
-            NotifyPropertyChangedProxy<Trader> pTed = new NotifyPropertyChangedProxy<Trader>(farmerTed);
 
-            Trader peteTheHerbalist = new Trader("Pete The Herbalist");
+            Trader peteTheHerbalist = Create<TraderFactory, Trader>("Pete The Herbalist");
             peteTheHerbalist.AddItemToInventory(ItemFactory.CreateGameItem(1001));
-            NotifyPropertyChangedProxy<Trader> pPete = new NotifyPropertyChangedProxy<Trader>(peteTheHerbalist);
 
-            /*AddTraderToList(pSusan.GetTransparentProxy() as Trader);
-            AddTraderToList(pTed.GetTransparentProxy() as Trader);
-            AddTraderToList(pPete.GetTransparentProxy() as Trader);*/
             AddTraderToList(susan);
             AddTraderToList(farmerTed);
             AddTraderToList(peteTheHerbalist);
@@ -46,6 +39,23 @@ namespace Engine.Factories
             }
 
             _traders.Add(trader);
+        }
+
+        public T CreateType<T>(params object[] ctorArguments) where T : class
+        {
+            if (typeof(T) == typeof(Trader))
+            {
+                return _generator.CreateClassProxy
+                (
+                    typeof(Trader),
+                    new Type[0],
+                    new ProxyGenerationOptions(new NotifyPropertyChangedHook()) { Selector = new NotifyPropertyChangedSelector() },
+                    new object[] { (string) ctorArguments[0] },
+                    new NotifyPropertyChangedInterceptor()
+                ) as T;
+            }
+
+            throw new NotImplementedException();
         }
     }
 }

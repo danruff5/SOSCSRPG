@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace Engine
 {
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Method)]
     public class BaseNotifyPropertyChangedAttribute : Attribute
     {
         public BaseNotifyPropertyChangedAttribute

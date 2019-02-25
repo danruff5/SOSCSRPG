@@ -8,32 +8,21 @@ namespace Engine.Models
 {
     public class GroupedInventoryItem : BaseNotifyPropertyChanged
     {
-        private GameItem _item;
-        private int _quantity;
-
         public GroupedInventoryItem(GameItem item, int quantity)
         {
             Item = item;
             Quantity = quantity;
         }
 
-        public GameItem Item
+        public virtual GameItem Item
         {
-            get { return _item; }
-            set
-            {
-                _item = value;
-                OnPropertyChanged();
-            }
+            get;
+            [BaseNotifyPropertyChanged] set;
         }
-        public int Quantity
+        public virtual int Quantity
         {
-            get { return _quantity; }
-            set
-            {
-                _quantity = value;
-                OnPropertyChanged();
-            }
+            get;
+            [BaseNotifyPropertyChanged] set;
         }
     }
 }

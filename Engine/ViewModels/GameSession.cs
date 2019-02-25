@@ -2,6 +2,7 @@
 using Engine.Factories;
 using Engine.Models;
 using System;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Engine.ViewModels
@@ -23,9 +24,7 @@ namespace Engine.ViewModels
         {
             CurrentWorld = WorldFactory.CreateWorld();
 
-            Player p = new Player("Daniel", "Fighter", 0, 10, 10, 1000000);
-            NotifyPropertyChangedProxy<Player> pp = new NotifyPropertyChangedProxy<Player>(p);
-            CurrentPlayer = p;//pp.GetTransparentProxy() as Player;
+            CurrentPlayer = BaseFactory.Create<PlayerFactory, Player>("Daniel", "Fighter", 0, 10, 10, 1000000);
 
             if (!CurrentPlayer.Weapons.Any())
             {
@@ -40,9 +39,26 @@ namespace Engine.ViewModels
 
             CurrentLocation = CurrentWorld.LocationAt(0, 0);
 
+            PropertyChanged += OnGamePropertyChanged;
             OnNewLocation += OnNewLocation_CurrentLocation;
             OnNewMonster += OnNewMonster_CurrentMonster;
             OnNewPlayer += OnNewPlayer_CurrentPlayer;
+        }
+
+        private void OnGamePropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(CurrentPlayer))
+            {
+                OnNewPlayer?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentPlayer)));
+            }
+            else if (e.PropertyName == nameof(CurrentLocation))
+            {
+                OnNewLocation?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentLocation)));
+            }
+            else if (e.PropertyName == nameof(CurrentMonster))
+            {
+                OnNewMonster?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentMonster)));
+            }
         }
 
         private void OnNewPlayer_CurrentPlayer(object sender, System.EventArgs e)
@@ -95,33 +111,28 @@ namespace Engine.ViewModels
             OnMessageRaised?.Invoke(this, new GameMessagesEventArgs(message));
         }
 
-
-        [BaseNotifyPropertyChanged
-        (
-            nameof(HasMonster)
-        )]
-        public Monster CurrentMonster { get; set; }
-
-        [BaseNotifyPropertyChanged
-        (
-            nameof(HasLocationToNorth),
-            nameof(HasLocationToEast),
-            nameof(HasLocationToSouth),
-            nameof(HasLocationToWest)
-        )]
-        public Location CurrentLocation {
+        public virtual Monster CurrentMonster
+        {
             get;
-            set;
+            [BaseNotifyPropertyChanged(nameof(CurrentMonster), nameof(HasMonster))] set;
         }
-
-        [BaseNotifyPropertyChanged
-        (
-            nameof(HasTrader)
-        )]
-        public Trader CurrentTrader { get; set; }
-
-        [BaseNotifyPropertyChanged]
-        public Player CurrentPlayer { get; set; }
+        public virtual Location CurrentLocation
+        {
+            get;
+            [BaseNotifyPropertyChanged(
+                nameof(CurrentLocation),
+                nameof(HasLocationToNorth),
+                nameof(HasLocationToEast),
+                nameof(HasLocationToSouth),
+                nameof(HasLocationToWest)
+            )] set;
+        }
+        public virtual Trader CurrentTrader
+        {
+            get;
+            [BaseNotifyPropertyChanged(nameof(CurrentTrader), nameof(HasTrader))] set;
+        }
+        public virtual Player CurrentPlayer { get; [BaseNotifyPropertyChanged]set; }
 
         public bool HasLocationToNorth => CurrentWorld.LocationAt(CurrentLocation.XCoordinate, CurrentLocation.YCoordinate + 1) != null;
         public bool HasLocationToEast => CurrentWorld.LocationAt(CurrentLocation.XCoordinate + 1, CurrentLocation.YCoordinate) != null;

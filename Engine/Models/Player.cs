@@ -6,9 +6,6 @@ namespace Engine.Models
 {
     public class Player : LivingEntity
     {
-        private string _characterClass;
-        private int _experiencePoints;
-
         public ObservableCollection<QuestStatus> Quests { get; }
         public ObservableCollection<Recipe> Recipes { get; }
 
@@ -31,25 +28,15 @@ namespace Engine.Models
 
         public event EventHandler OnLevelUp;
 
-        public string CharacterClass
+        public virtual string CharacterClass
         {
-            get { return _characterClass; }
-            set
-            {
-                _characterClass = value;
-                OnPropertyChanged();
-            }
+            get;
+            [BaseNotifyPropertyChanged] set;
         }
-        public int ExperiencePoints
+        public virtual int ExperiencePoints
         {
-            get { return _experiencePoints; }
-            private set
-            {
-                _experiencePoints = value;
-                OnPropertyChanged();
-
-                SetLevelAndMaximumHitPoints();
-            }
+            get;
+            [BaseNotifyPropertyChanged] set;
         }
         
         public void LearnRecipe(Recipe recipe)

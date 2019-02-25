@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Engine.Models
 {
-    public class QuestStatus :BaseNotifyPropertyChanged
+    public class QuestStatus : BaseNotifyPropertyChanged
     {
-        private bool _isCompleated;
-
         public Quest PlayerQuest { get; }
 
         public QuestStatus(Quest quest)
@@ -18,15 +16,10 @@ namespace Engine.Models
             IsCompleted = false;
         }
 
-        public bool IsCompleted
+        public virtual bool IsCompleted
         {
-            get { return _isCompleated; }
-            set
-            {
-                _isCompleated = value;
-
-                OnPropertyChanged();
-            }
+            get;
+            [BaseNotifyPropertyChanged] set;
         }
     }
 }

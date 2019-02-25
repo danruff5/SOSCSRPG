@@ -2,21 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Models
 {
     public abstract class LivingEntity : BaseNotifyPropertyChanged
     {
-        private string _name;
-        private int _currentHitPoints;
-        private int _maximumHitPoints;
-        private int _gold;
-        private int _level;
-        private GameItem _currentWeapon;
-        private GameItem _currentConsumable;
-
         public ObservableCollection<GameItem> Inventory { get; }
         public ObservableCollection<GroupedInventoryItem> GroupedInventory { get; }
         public List<GameItem> Weapons => Inventory.Where(i => i.Category == GameItem.ItemCategory.Weapon).ToList();
@@ -27,9 +17,9 @@ namespace Engine.Models
 
         protected LivingEntity
         (
-            string name, 
-            int maximumHitPoints, 
-            int currentHitpoints, 
+            string name,
+            int maximumHitPoints,
+            int currentHitpoints,
             int gold,
             int level = 1
         )
@@ -44,91 +34,31 @@ namespace Engine.Models
             GroupedInventory = new ObservableCollection<GroupedInventoryItem>();
         }
 
-        public string Name
-        {
-            get { return _name; }
-            private set
-            {
-                _name = value; 
-                OnPropertyChanged();
-            }
-        }
-        public int CurrentHitPoints
-        {
-            get { return _currentHitPoints; }
-            private set
-            {
-                _currentHitPoints = value; 
-                OnPropertyChanged();
-            }
-        }
-        public int MaximumHitPoints
-        {
-            get { return _maximumHitPoints; }
-            protected set
-            {
-                _maximumHitPoints = value; 
-                OnPropertyChanged();
-            }
-        }
-        public int Gold
-        {
-            get { return _gold; }
-            private set
-            {
-                _gold = value; 
-                OnPropertyChanged();
-            }
-        }
-        public int Level
-        {
-            get { return _level; }
-            protected set
-            {
-                _level = value;
-                OnPropertyChanged();
-            }
-        }
-        public GameItem CurrentWeapon
-        {
-            get { return _currentWeapon; }
-            set
-            {
-                if (_currentWeapon != null)
-                {
-                    _currentWeapon.Action.OnActionPerformed -= RaiseActionPerformedEvent;
-                }
+        public virtual string Name { get; [BaseNotifyPropertyChanged] set; }
+        public virtual int CurrentHitPoints { get; [BaseNotifyPropertyChanged] set; }
+        public virtual int MaximumHitPoints { get; [BaseNotifyPropertyChanged] set; }
+        public virtual int Gold { get; [BaseNotifyPropertyChanged] set; }
+        public virtual int Level { get; [BaseNotifyPropertyChanged] set; }
 
-                _currentWeapon = value;
+        // if (_currentWeapon != null)
+        // {
+        //     _currentWeapon.Action.OnActionPerformed -= RaiseActionPerformedEvent;
+        // }
+        // if (_currentWeapon != null)
+        // {
+        //     _currentWeapon.Action.OnActionPerformed += RaiseActionPerformedEvent;
+        // }
+        public virtual GameItem CurrentWeapon { get; [BaseNotifyPropertyChanged]set; }
 
-                if (_currentWeapon != null)
-                {
-                    _currentWeapon.Action.OnActionPerformed += RaiseActionPerformedEvent;
-                }
-
-                OnPropertyChanged();
-            }
-        }
-        public GameItem CurrentConsumable
-        {
-            get { return _currentConsumable; }
-            set
-            {
-                if (_currentConsumable != null)
-                {
-                    _currentConsumable.Action.OnActionPerformed -= RaiseActionPerformedEvent;
-                }
-
-                _currentConsumable = value;
-
-                if (_currentConsumable != null)
-                {
-                    _currentConsumable.Action.OnActionPerformed += RaiseActionPerformedEvent;
-                }
-
-                OnPropertyChanged();
-            }
-        }
+        // if (_currentConsumable != null)
+        // {
+        //     _currentConsumable.Action.OnActionPerformed -= RaiseActionPerformedEvent;
+        // }
+        // if (_currentConsumable != null)
+        // {
+        //     _currentConsumable.Action.OnActionPerformed += RaiseActionPerformedEvent;
+        // }
+        public virtual GameItem CurrentConsumable { get; [BaseNotifyPropertyChanged]set; }
 
         public bool IsDead => CurrentHitPoints <= 0;
         public bool HasConsumable => Consumables.Any();
@@ -150,7 +80,7 @@ namespace Engine.Models
 
                 GroupedInventory.First(gi => gi.Item.ItemTypeID == item.ItemTypeID).Quantity++;
             }
- 
+
             OnPropertyChanged(nameof(Weapons));
             OnPropertyChanged(nameof(Consumables));
             OnPropertyChanged(nameof(HasConsumable));
@@ -159,8 +89,8 @@ namespace Engine.Models
         {
             Inventory.Remove(item);
 
-            GroupedInventoryItem groupedInventoryItemToRemove = item.IsUnique ? 
-                GroupedInventory.FirstOrDefault(gi => gi.Item == item) : 
+            GroupedInventoryItem groupedInventoryItemToRemove = item.IsUnique ?
+                GroupedInventory.FirstOrDefault(gi => gi.Item == item) :
                 GroupedInventory.FirstOrDefault(gi => gi.Item.ItemTypeID == item.ItemTypeID);
 
             if (groupedInventoryItemToRemove.Quantity == 1)
@@ -171,7 +101,7 @@ namespace Engine.Models
             {
                 groupedInventoryItemToRemove.Quantity--;
             }
- 
+
             OnPropertyChanged(nameof(Weapons));
             OnPropertyChanged(nameof(Consumables));
             OnPropertyChanged(nameof(HasConsumable));
@@ -188,22 +118,22 @@ namespace Engine.Models
         }
         public bool HasAllTheseItems(List<ItemQuantity> items)
         {
-            foreach(ItemQuantity item in items)
+            foreach (ItemQuantity item in items)
             {
-                if(Inventory.Count(i => i.ItemTypeID == item.ItemID) < item.Quantity)
+                if (Inventory.Count(i => i.ItemTypeID == item.ItemID) < item.Quantity)
                 {
                     return false;
                 }
             }
- 
+
             return true;
         }
 
         public void TakeDamage(int hitPointsOfDamage)
         {
             CurrentHitPoints -= hitPointsOfDamage;
- 
-            if(IsDead)
+
+            if (IsDead)
             {
                 CurrentHitPoints = 0;
                 RaiseOnKilledEvent();
@@ -221,8 +151,8 @@ namespace Engine.Models
         public void Heal(int hitPointsToHeal)
         {
             CurrentHitPoints += hitPointsToHeal;
- 
-            if(CurrentHitPoints > MaximumHitPoints)
+
+            if (CurrentHitPoints > MaximumHitPoints)
             {
                 CurrentHitPoints = MaximumHitPoints;
             }
@@ -237,11 +167,11 @@ namespace Engine.Models
         }
         public void SpendGold(int amountOfGold)
         {
-            if(amountOfGold > Gold)
+            if (amountOfGold > Gold)
             {
                 throw new ArgumentOutOfRangeException($"{Name} only has {Gold} gold, and cannot spend {amountOfGold} gold");
             }
- 
+
             Gold -= amountOfGold;
         }
 

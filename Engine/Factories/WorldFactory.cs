@@ -43,12 +43,14 @@ namespace Engine.Factories
  
             foreach(XmlNode node in nodes)
             {
-                Location location =
-                    new Location(node.AttributeAsInt("X"),
-                                 node.AttributeAsInt("Y"),
-                                 node.AttributeAsString("Name"),
-                                 node.SelectSingleNode("./Description")?.InnerText ?? "",
-                                 $".{rootImagePath}{node.AttributeAsString("ImageName")}");
+                Location location = BaseFactory.Create<LocationFactory, Location>
+                (
+                    node.AttributeAsInt("X"),
+                    node.AttributeAsInt("Y"),
+                    node.AttributeAsString("Name"),
+                    node.SelectSingleNode("./Description")?.InnerText ?? "",
+                    $".{rootImagePath}{node.AttributeAsString("ImageName")}"
+                ) as Location;
  
                 AddMonsters(location, node.SelectNodes("./Monsters/Monster"));
                 AddQuests(location, node.SelectNodes("./Quests/Quest"));
