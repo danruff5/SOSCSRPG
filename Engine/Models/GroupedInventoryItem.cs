@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Engine.Attributes;
 
 namespace Engine.Models
 {
@@ -17,12 +13,14 @@ namespace Engine.Models
         public virtual GameItem Item
         {
             get;
-            [BaseNotifyPropertyChanged] set;
+            [BaseNotifyPropertyChanged]
+            set;
         }
         public virtual int Quantity
         {
             get;
-            [BaseNotifyPropertyChanged] set;
+            [BaseNotifyPropertyChanged]
+            set;
         }
     }
 }

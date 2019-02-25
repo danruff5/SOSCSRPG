@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Engine
+namespace Engine.Models
 {
     public class BaseNotifyPropertyChanged : MarshalByRefObject, INotifyPropertyChanged
     {

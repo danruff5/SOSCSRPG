@@ -1,10 +1,8 @@
 ﻿using Castle.DynamicProxy;
 using Engine.Models;
+using Engine.Proxy.HandleEvents;
+using Engine.Proxy.NotifyPropertyChanged;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Factories
 {
@@ -16,22 +14,23 @@ namespace Engine.Factories
             {
                 return _generator.CreateClassProxy
                 (
-                    typeof(Player), 
-                    new Type[0], 
+                    typeof(Player),
+                    new Type[0],
                     new ProxyGenerationOptions(new NotifyPropertyChangedHook())
                     {
                         Selector = new NotifyPropertyChangedSelector()
                     },
-                    new object[] 
+                    new object[]
                     {
-                        (string) ctorArguments[0], 
-                        (string) ctorArguments[1], 
+                        (string) ctorArguments[0],
+                        (string) ctorArguments[1],
                         (int) ctorArguments[2],
-                        (int) ctorArguments[3], 
-                        (int) ctorArguments[4], 
+                        (int) ctorArguments[3],
+                        (int) ctorArguments[4],
                         (int) ctorArguments[5]
                     },
-                    new NotifyPropertyChangedInterceptor()
+                    new NotifyPropertyChangedInterceptor(),
+                    new HandleEventsInterceptor()
                 ) as T;
             }
 

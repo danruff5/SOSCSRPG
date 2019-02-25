@@ -1,11 +1,13 @@
-﻿using Engine.ViewModels;
+﻿using Engine.Attributes;
+using Engine.Models;
+using Engine.ViewModels;
 using System;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Proxies;
 
-namespace Engine
+namespace Engine.Old
 {
     public class NotifyPropertyChangedProxy<T> : RealProxy where T : BaseNotifyPropertyChanged
     {

@@ -1,4 +1,6 @@
 ﻿using Castle.DynamicProxy;
+using Engine.Proxy.HandleEvents;
+using Engine.Proxy.NotifyPropertyChanged;
 using Engine.ViewModels;
 using System;
 
@@ -19,7 +21,8 @@ namespace Engine.Factories
                     {
                         Selector = new NotifyPropertyChangedSelector()
                     },
-                    new NotifyPropertyChangedInterceptor()
+                    new NotifyPropertyChangedInterceptor(),
+                    new HandleEventsInterceptor()
                 ) as T;
             }
 

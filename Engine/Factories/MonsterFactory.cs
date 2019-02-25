@@ -1,7 +1,8 @@
 ﻿using Castle.DynamicProxy;
 using Engine.Models;
+using Engine.Proxy.HandleEvents;
+using Engine.Proxy.NotifyPropertyChanged;
 using System;
-using System.Linq;
 
 namespace Engine.Factories
 {
@@ -49,25 +50,26 @@ namespace Engine.Factories
         {
             if (typeof(T) == typeof(Monster))
             {
-                  return _generator.CreateClassProxy
-                  (
-                      typeof(Monster),
-                      new Type[0],
-                      new ProxyGenerationOptions(new NotifyPropertyChangedHook())
-                      {
-                          Selector = new NotifyPropertyChangedSelector()
-                      },
-                      new object[] 
-                      {
+                return _generator.CreateClassProxy
+                (
+                    typeof(Monster),
+                    new Type[0],
+                    new ProxyGenerationOptions(new NotifyPropertyChangedHook())
+                    {
+                        Selector = new NotifyPropertyChangedSelector()
+                    },
+                    new object[]
+                    {
                             (string) ctorArguments[0],
                             (string) ctorArguments[1],
                             (int) ctorArguments[2],
                             (int) ctorArguments[3],
                             (int) ctorArguments[4],
                             (int) ctorArguments[5]
-                      },
-                      new NotifyPropertyChangedInterceptor()
-                  ) as T;
+                    },
+                    new NotifyPropertyChangedInterceptor(),
+                    new HandleEventsInterceptor()
+                ) as T;
             }
 
             throw new NotImplementedException();

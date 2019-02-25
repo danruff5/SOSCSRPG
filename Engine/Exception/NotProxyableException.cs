@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Runtime.Serialization;
 
-namespace Engine
+namespace Engine.Exceptions
 {
     [Serializable]
     internal class NotProxyableException : Exception

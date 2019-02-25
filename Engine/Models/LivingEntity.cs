@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Engine.Actions;
+using Engine.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -12,8 +14,8 @@ namespace Engine.Models
         public List<GameItem> Weapons => Inventory.Where(i => i.Category == GameItem.ItemCategory.Weapon).ToList();
         public List<GameItem> Consumables => Inventory.Where(i => i.Category == GameItem.ItemCategory.Consumable).ToList();
 
-        public event EventHandler OnKilled;
-        public event EventHandler<string> OnActionPerformed;
+        public event EventHandler Killed;
+        public event EventHandler<string> ActionPerformed;
 
         protected LivingEntity
         (
@@ -40,25 +42,23 @@ namespace Engine.Models
         public virtual int Gold { get; [BaseNotifyPropertyChanged] set; }
         public virtual int Level { get; [BaseNotifyPropertyChanged] set; }
 
-        // if (_currentWeapon != null)
-        // {
-        //     _currentWeapon.Action.OnActionPerformed -= RaiseActionPerformedEvent;
-        // }
-        // if (_currentWeapon != null)
-        // {
-        //     _currentWeapon.Action.OnActionPerformed += RaiseActionPerformedEvent;
-        // }
-        public virtual GameItem CurrentWeapon { get; [BaseNotifyPropertyChanged]set; }
 
-        // if (_currentConsumable != null)
-        // {
-        //     _currentConsumable.Action.OnActionPerformed -= RaiseActionPerformedEvent;
-        // }
-        // if (_currentConsumable != null)
-        // {
-        //     _currentConsumable.Action.OnActionPerformed += RaiseActionPerformedEvent;
-        // }
-        public virtual GameItem CurrentConsumable { get; [BaseNotifyPropertyChanged]set; }
+        
+        public virtual GameItem CurrentWeapon
+        {
+            get;
+            [HandleEvents(nameof(LivingEntity.CurrentConsumable.Action.OnActionPerformed), nameof(RaiseActionPerformedEvent))]
+            [BaseNotifyPropertyChanged]
+            set;
+        }
+
+        public virtual GameItem CurrentConsumable
+        {
+            get;
+            [HandleEvents(nameof(LivingEntity.CurrentConsumable.Action.OnActionPerformed), nameof(RaiseActionPerformedEvent))]
+            [BaseNotifyPropertyChanged]
+            set;
+        }
 
         public bool IsDead => CurrentHitPoints <= 0;
         public bool HasConsumable => Consumables.Any();
@@ -175,13 +175,13 @@ namespace Engine.Models
             Gold -= amountOfGold;
         }
 
-        private void RaiseOnKilledEvent()
+        public void RaiseOnKilledEvent()
         {
-            OnKilled?.Invoke(this, new System.EventArgs());
+            Killed?.Invoke(this, new System.EventArgs());
         }
-        private void RaiseActionPerformedEvent(object sender, string result)
+        public void RaiseActionPerformedEvent(object sender, string result)
         {
-            OnActionPerformed?.Invoke(this, result);
+            ActionPerformed?.Invoke(this, result);
         }
     }
 }

@@ -48,7 +48,13 @@ namespace Engine.Models
 
         public GameItem Clone()
         {
-            return new GameItem(Category, ItemTypeID, Name, Price, IsUnique);
+            GameItem i = new GameItem(Category, ItemTypeID, Name, Price, IsUnique);
+            if (Action != null)
+            {
+                i.Action = Action;
+            }
+
+            return i;
         }
     }
 }

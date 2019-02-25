@@ -1,5 +1,7 @@
 ﻿using Castle.DynamicProxy;
 using Engine.Models;
+using Engine.Proxy.HandleEvents;
+using Engine.Proxy.NotifyPropertyChanged;
 using System;
 
 namespace Engine.Factories
@@ -15,7 +17,7 @@ namespace Engine.Factories
                     typeof(Location),
                     new Type[0],
                     new ProxyGenerationOptions(new NotifyPropertyChangedHook()) { Selector = new NotifyPropertyChangedSelector() },
-                    new object[] 
+                    new object[]
                     {
                         (int) ctorArguments[0],
                         (int) ctorArguments[1],
@@ -23,7 +25,8 @@ namespace Engine.Factories
                         (string) ctorArguments[3],
                         (string) ctorArguments[4]
                     },
-                    new NotifyPropertyChangedInterceptor()
+                    new NotifyPropertyChangedInterceptor(),
+                    new HandleEventsInterceptor()
                 ) as T;
             }
 

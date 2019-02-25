@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace Engine
+namespace Engine.Attributes
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class BaseNotifyPropertyChangedAttribute : Attribute

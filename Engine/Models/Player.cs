@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Engine.Attributes;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -11,11 +12,11 @@ namespace Engine.Models
 
         public Player
         (
-            string name, 
-            string characterClass, 
+            string name,
+            string characterClass,
             int experiencePoints,
-            int maximumHitPoints, 
-            int currentHitPoints, 
+            int maximumHitPoints,
+            int currentHitPoints,
             int gold
         ) : base(name, maximumHitPoints, currentHitPoints, gold)
         {
@@ -31,17 +32,19 @@ namespace Engine.Models
         public virtual string CharacterClass
         {
             get;
-            [BaseNotifyPropertyChanged] set;
+            [BaseNotifyPropertyChanged]
+            set;
         }
         public virtual int ExperiencePoints
         {
             get;
-            [BaseNotifyPropertyChanged] set;
+            [BaseNotifyPropertyChanged]
+            set;
         }
-        
+
         public void LearnRecipe(Recipe recipe)
         {
-            if(!Recipes.Any(r => r.ID == recipe.ID))
+            if (!Recipes.Any(r => r.ID == recipe.ID))
             {
                 Recipes.Add(recipe);
             }
@@ -54,13 +57,13 @@ namespace Engine.Models
         private void SetLevelAndMaximumHitPoints()
         {
             int originalLevel = Level;
- 
+
             Level = (ExperiencePoints / 100) + 1;
- 
+
             if (Level != originalLevel)
             {
                 MaximumHitPoints = Level * 10;
- 
+
                 OnLevelUp?.Invoke(this, System.EventArgs.Empty);
             }
         }

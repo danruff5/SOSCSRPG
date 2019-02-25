@@ -1,4 +1,5 @@
-﻿using Engine.EventArgs;
+﻿using Engine.Attributes;
+using Engine.EventArgs;
 using Engine.Factories;
 using Engine.Models;
 using System;
@@ -42,7 +43,6 @@ namespace Engine.ViewModels
             PropertyChanged += OnGamePropertyChanged;
             OnNewLocation += OnNewLocation_CurrentLocation;
             OnNewMonster += OnNewMonster_CurrentMonster;
-            OnNewPlayer += OnNewPlayer_CurrentPlayer;
         }
 
         private void OnGamePropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -61,36 +61,11 @@ namespace Engine.ViewModels
             }
         }
 
-        private void OnNewPlayer_CurrentPlayer(object sender, System.EventArgs e)
-        {
-            if (CurrentPlayer != null)
-            {
-                CurrentPlayer.OnActionPerformed -= OnActionPerformed_CurrentPlayer;
-                CurrentPlayer.OnLevelUp -= OnLevelUp_CurrentPlayer;
-                CurrentPlayer.OnKilled -= OnKilled_CurrentPlayer;
-            }
-            // TODO: need to do these before and after the real call...
-            if (CurrentPlayer != null)
-            {
-                CurrentPlayer.OnActionPerformed += OnActionPerformed_CurrentPlayer;
-                CurrentPlayer.OnLevelUp += OnLevelUp_CurrentPlayer;
-                CurrentPlayer.OnKilled += OnKilled_CurrentPlayer;
-            }
-        }
 
         private void OnNewMonster_CurrentMonster(object sender, System.EventArgs e)
         {
-            if (CurrentMonster != null)
+            if (HasMonster)
             {
-                CurrentMonster.OnActionPerformed -= OnActionPerformed_CurrentMonster;
-                CurrentMonster.OnKilled -= OnKilled_CurrentMonster;
-            }
-
-            if (CurrentMonster != null)
-            {
-                CurrentMonster.OnActionPerformed += OnActionPerformed_CurrentMonster;
-                CurrentMonster.OnKilled += OnKilled_CurrentMonster;
-
                 RaiseMessage("");
                 RaiseMessage($"You see a {CurrentMonster.Name} here!");
             }
@@ -111,10 +86,15 @@ namespace Engine.ViewModels
             OnMessageRaised?.Invoke(this, new GameMessagesEventArgs(message));
         }
 
+
+        
         public virtual Monster CurrentMonster
         {
             get;
-            [BaseNotifyPropertyChanged(nameof(CurrentMonster), nameof(HasMonster))] set;
+            [HandleEvents(nameof(GameSession.CurrentMonster.ActionPerformed), nameof(OnActionPerformed_CurrentMonster))]
+            [HandleEvents(nameof(GameSession.CurrentMonster.Killed), nameof(OnKilled_CurrentMonster))]
+            [BaseNotifyPropertyChanged(nameof(CurrentMonster), nameof(HasMonster))]
+            set;
         }
         public virtual Location CurrentLocation
         {
@@ -125,14 +105,24 @@ namespace Engine.ViewModels
                 nameof(HasLocationToEast),
                 nameof(HasLocationToSouth),
                 nameof(HasLocationToWest)
-            )] set;
+            )]
+            set;
         }
         public virtual Trader CurrentTrader
         {
             get;
-            [BaseNotifyPropertyChanged(nameof(CurrentTrader), nameof(HasTrader))] set;
+            [BaseNotifyPropertyChanged(nameof(CurrentTrader), nameof(HasTrader))]
+            set;
         }
-        public virtual Player CurrentPlayer { get; [BaseNotifyPropertyChanged]set; }
+        public virtual Player CurrentPlayer
+        {
+            get;
+            [HandleEvents(nameof(GameSession.CurrentPlayer.ActionPerformed), nameof(OnActionPerformed_CurrentPlayer))]
+            [HandleEvents(nameof(GameSession.CurrentPlayer.Killed), nameof(OnKilled_CurrentPlayer))]
+            [HandleEvents(nameof(GameSession.CurrentPlayer.OnLevelUp), nameof(OnLevelUp_CurrentPlayer))]
+            [BaseNotifyPropertyChanged]
+            set;
+        }
 
         public bool HasLocationToNorth => CurrentWorld.LocationAt(CurrentLocation.XCoordinate, CurrentLocation.YCoordinate + 1) != null;
         public bool HasLocationToEast => CurrentWorld.LocationAt(CurrentLocation.XCoordinate + 1, CurrentLocation.YCoordinate) != null;
@@ -247,7 +237,7 @@ namespace Engine.ViewModels
         }
         public void AttackCurrentMonster()
         {
-            if (CurrentMonster != null)
+            if (CurrentMonster == null)
             {
                 return;
             }
@@ -301,7 +291,7 @@ namespace Engine.ViewModels
                 }
             }
         }
-        private void OnKilled_CurrentPlayer(object sender, System.EventArgs eventArgs)
+        public void OnKilled_CurrentPlayer(object sender, System.EventArgs eventArgs)
         {
             RaiseMessage("");
             RaiseMessage($"You have been killed"); // TODO: Add message to event based on what killed.
@@ -309,7 +299,7 @@ namespace Engine.ViewModels
             CurrentLocation = CurrentWorld.LocationAt(0, -1);
             CurrentPlayer.CompletelyHeal();
         }
-        private void OnKilled_CurrentMonster(object sender, System.EventArgs eventArgs)
+        public void OnKilled_CurrentMonster(object sender, System.EventArgs eventArgs)
         {
             RaiseMessage("");
             RaiseMessage($"You defeated the {CurrentMonster.Name}!");
@@ -326,15 +316,15 @@ namespace Engine.ViewModels
                 CurrentPlayer.AddItemToInventory(gameItem);
             }
         }
-        private void OnLevelUp_CurrentPlayer(object sender, System.EventArgs eventArgs)
+        public void OnLevelUp_CurrentPlayer(object sender, System.EventArgs eventArgs)
         {
             RaiseMessage($"You are now level {CurrentPlayer.Level}!");
         }
-        private void OnActionPerformed_CurrentPlayer(object sender, string result)
+        public void OnActionPerformed_CurrentPlayer(object sender, string result)
         {
             RaiseMessage(result);
         }
-        private void OnActionPerformed_CurrentMonster(object sender, string result)
+        public void OnActionPerformed_CurrentMonster(object sender, string result)
         {
             RaiseMessage(result);
         }

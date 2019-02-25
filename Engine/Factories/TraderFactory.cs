@@ -1,5 +1,7 @@
 ﻿using Castle.DynamicProxy;
 using Engine.Models;
+using Engine.Proxy.HandleEvents;
+using Engine.Proxy.NotifyPropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,8 +52,9 @@ namespace Engine.Factories
                     typeof(Trader),
                     new Type[0],
                     new ProxyGenerationOptions(new NotifyPropertyChangedHook()) { Selector = new NotifyPropertyChangedSelector() },
-                    new object[] { (string) ctorArguments[0] },
-                    new NotifyPropertyChangedInterceptor()
+                    new object[] { (string)ctorArguments[0] },
+                    new NotifyPropertyChangedInterceptor(),
+                    new HandleEventsInterceptor()
                 ) as T;
             }
 

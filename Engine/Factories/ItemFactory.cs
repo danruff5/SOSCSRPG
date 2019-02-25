@@ -35,7 +35,7 @@ namespace Engine.Factories
             BuildWeapon(1002, "Rusty Sword", 5, 1, 3);
 
             BuildWeapon(1501, "Snake fangs", 0, 0, 2);
-            BuildWeapon(1502, "Rat claws", 0, 0, 2);
+            BuildWeapon(1502, "Rat claws", 0, 20, 25);
             BuildWeapon(1503, "Spider fangs", 0, 0, 4);
 
             BuildHealingItem(2001, "Granola bar", 5, 2);
@@ -71,7 +71,7 @@ namespace Engine.Factories
                 true
             );
 
-            weapon.Action = new Actions.AttackWithWeapon(weapon, miniumDamage, maximumDamage);
+            weapon.Action = new AttackWithWeapon(weapon, miniumDamage, maximumDamage);
 
             _standardGameItems.Add(weapon);
         }
