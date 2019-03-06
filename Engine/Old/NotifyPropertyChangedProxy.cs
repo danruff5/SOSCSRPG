@@ -53,7 +53,7 @@ namespace Engine.Old
             }
             catch (System.Exception e)
             {
-                // Note: since this impl is on property setters and OnPropertyChanged there should never be an error.
+                // N o t e: since this impl is on property setters and OnPropertyChanged there should never be an error.
                 return new ReturnMessage(e, methodCall);
             }
         }

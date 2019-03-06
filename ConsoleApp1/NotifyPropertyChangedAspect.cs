@@ -15,6 +15,7 @@ namespace ConsoleApp1
         {
             invocation.Proceed();
 
+            // AllowMultiple = false
             BaseNotifyPropertyChangedAttribute attribute = ProxyCommon.AsAttribute<BaseNotifyPropertyChangedAttribute>(invocation.Method);
             if (attribute != null)
             {

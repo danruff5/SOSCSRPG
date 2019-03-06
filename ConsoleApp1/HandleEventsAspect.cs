@@ -12,6 +12,7 @@ namespace ConsoleApp1
         public override void Intercept(IInvocation invocation)
         {
             // Get all the set attributes.
+            // AllowMultiple = true
             HandleEventsAttribute[] attributes = ProxyCommon.AsAttribute<HandleEventsAttribute[]>(invocation.Method);
 
             // The attribute can only be applied to Properties that are objects and have a getter.
@@ -52,6 +53,7 @@ namespace ConsoleApp1
 
                 if (typeof(GameItem) == invocation.InvocationTarget.GetType().GetProperty(attribute.MemberName)?.PropertyType)
                 {
+                    // Object->Property->Action->Event
                     // LivingEntity.get_CurrentWeapon.get_Action.OnActionPerformed
                     // CurrentWeapon.Action.OnActionPerformed -= RaiseActionPerformedEvent
                     object _currentWeapon = invocation.InvocationTarget.GetType().GetProperty(attribute.MemberName).GetValue(invocation.InvocationTarget);
@@ -60,6 +62,7 @@ namespace ConsoleApp1
                 }
                 else
                 {
+                    // Object->Property->Event
                     // GameSession.get_CurrentMonster.ActionPerformed
                     // CurrentMonster.ActionPerformed -= OnActionPerformed_CurrentMonster
                     _obj = invocation.InvocationTarget.GetType().GetProperty(attribute.MemberName).GetValue(invocation.InvocationTarget);
