@@ -6,7 +6,7 @@ namespace Engine.Proxy
 {
     // TODO: Add in default impls of apply on proerties and getters or setters.
     // TODO: Combine *Hook's, *Interceptor's, *Selector's into pointcut's, aspect.
-    internal static class ProxyCommon
+    public static class ProxyCommon
     {
         public static T AsAttribute<T>(MethodInfo methodInfo) where T : class
         {

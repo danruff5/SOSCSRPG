@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace Engine.Exceptions
 {
     [Serializable]
-    internal class NotProxyableException : Exception
+    public class NotProxyableException : Exception
     {
         private MemberInfo _info;
 
