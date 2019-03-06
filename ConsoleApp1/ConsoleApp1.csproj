@@ -50,6 +50,7 @@
     <Compile Include="BaseAspect.cs" />
     <Compile Include="Foo.cs" />
     <Compile Include="FooFactory.cs" />
+    <Compile Include="HandleEventsAspect.cs" />
     <Compile Include="NotifyPropertyChangedAspect.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

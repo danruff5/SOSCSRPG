@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace Engine.Exceptions
 {
     [Serializable]
-    public class NotProxyableException : Exception
+    public class NotProxyableException : System.Exception
     {
         private MemberInfo _info;
 
@@ -22,7 +22,7 @@ namespace Engine.Exceptions
 
         public NotProxyableException() { }
         public NotProxyableException(string message) : base(message) { }
-        public NotProxyableException(string message, Exception innerException) : base(message, innerException) { }
+        public NotProxyableException(string message, System.Exception innerException) : base(message, innerException) { }
         protected NotProxyableException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }

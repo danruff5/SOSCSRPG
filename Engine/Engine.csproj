@@ -49,6 +49,7 @@
     <Compile Include="Actions\BaseAction.cs" />
     <Compile Include="Actions\Heal.cs" />
     <Compile Include="Actions\IAction.cs" />
+    <Compile Include="Exception\InvalidAttributeDecelerationException.cs" />
     <Compile Include="Models\BaseNotifyPropertyChanged.cs" />
     <Compile Include="Attribute\BaseNotifyPropertyChangedAttribute.cs" />
     <Compile Include="EventArgs\GameMessagesEventArgs.cs" />

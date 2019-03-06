@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Castle.DynamicProxy;
+using Engine.Exception;
+using System;
 using System.Linq;
 using System.Reflection;
 
 namespace Engine.Proxy
 {
-    // TODO: Add in default impls of apply on proerties and getters or setters.
-    // TODO: Combine *Hook's, *Interceptor's, *Selector's into pointcut's, aspect.
     public static class ProxyCommon
     {
         public static T AsAttribute<T>(MethodInfo methodInfo) where T : class
@@ -52,6 +52,58 @@ namespace Engine.Proxy
         {
             return IsSetter(method)
                 || method.Name.StartsWith("get_", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool IsPropertyWithAttribute<T>(Type type, MethodInfo method) where T : Attribute
+        {
+            if (IsGetter(method))
+            {
+                // Check if corresponding setter has attribute.
+                return HasAttribute<T>(type.GetProperty(GetPropertyName(method)).SetMethod);
+            }
+            else if (HasAttribute<T>(method))
+            {
+                if (IsSetter(method))
+                {
+                    return true;
+                }
+                else
+                {
+                    // The attribute cannot be applied to anything other than a setter method.
+                    throw new InvalidAttributeDecelerationException(method, nameof(T));
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static string GetPropertyName(MethodInfo method)
+        {
+            if (IsSetterOrGetter(method))
+            {
+                return method.Name.Substring("?et_".Length);
+            }
+            throw new InvalidOperationException($"The method {method.DeclaringType}#{method.Name} is not a propertry.");
+        }
+
+        public static object GetMethodResult(IInvocation invocation, string name, params object[] arguments)
+        {
+            MethodInfo method = invocation.InvocationTarget.GetType().GetMethod(name);
+            return method.Invoke(invocation.InvocationTarget, arguments);
+        }
+
+        public static void EditEvent(EventInfo @event, object obj, Delegate d, bool removeEvent = false)
+        {
+            if (removeEvent) // remove event
+            {
+                @event.GetRemoveMethod().Invoke(obj, new[] { d });
+            }
+            else // add event
+            {
+                @event.GetAddMethod().Invoke(obj, new[] { d });
+            }
         }
     }
 }

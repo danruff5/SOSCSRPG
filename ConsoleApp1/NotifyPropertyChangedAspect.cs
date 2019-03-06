@@ -7,8 +7,10 @@ using System.Reflection;
 
 namespace ConsoleApp1
 {
+    // Aspect
     public class NotifyPropertyChangedAspect : BaseAspect
     {
+        // Advice
         public override void Intercept(IInvocation invocation)
         {
             invocation.Proceed();
@@ -25,11 +27,10 @@ namespace ConsoleApp1
             }
         }
 
+        // Pointcut with error checking.
         public override bool ShouldInterceptMethod(Type type, MethodInfo methodInfo)
         {
-            // HACK, TODO: Fix to have bettor error. Attribute can be applied to any method but will not get triggered on it because not setter or getter.
-            return ProxyCommon.IsSetterOrGetter(methodInfo)
-                || ProxyCommon.HasAttribute<BaseNotifyPropertyChangedAttribute>(methodInfo);
+            return ProxyCommon.IsPropertyWithAttribute<BaseNotifyPropertyChangedAttribute>(type, methodInfo);
         }
     }
 }

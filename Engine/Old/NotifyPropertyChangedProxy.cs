@@ -51,7 +51,7 @@ namespace Engine.Old
 
                 return new ReturnMessage(result, null, 0, methodCall.LogicalCallContext, methodCall);
             }
-            catch (Exception e)
+            catch (System.Exception e)
             {
                 // Note: since this impl is on property setters and OnPropertyChanged there should never be an error.
                 return new ReturnMessage(e, methodCall);

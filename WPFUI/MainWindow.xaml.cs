@@ -16,7 +16,7 @@ namespace WPFUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly GameSession _gameSession; // TODO: Link to the Proxies
+        private readonly GameSession _gameSession;
         private readonly Dictionary<Key, Action> _userInputActions = new Dictionary<Key, Action>();
 
         public MainWindow()

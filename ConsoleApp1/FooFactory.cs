@@ -5,16 +5,21 @@ namespace ConsoleApp1
 {
     public class FooFactory : BaseFactory, IFactory
     {
+        // CLEAN: Simplify the factories?
         public T CreateType<T>(params object[] ctorArguments) where T : class
         {
-            return _generator.CreateClassProxy
+            Aspect<Foo> a = new Aspect<Foo>();
+            a.baseAspects.Add(new NotifyPropertyChangedAspect());
+
+            return _generator.CreateClassProxyWithTarget
                 (
                     typeof(Foo),
-                    new ProxyGenerationOptions(Aspect.Instance as IProxyGenerationHook)
+                    new Foo(),
+                    new ProxyGenerationOptions(a as IProxyGenerationHook)
                     {
-                        Selector = Aspect.Instance as IInterceptorSelector
+                        Selector = a as IInterceptorSelector
                     },
-                    new NotifyPropertyChangedAspect()
+                    a.baseAspects.ToArray()
                 ) as T;
         }
     }
